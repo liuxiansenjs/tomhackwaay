@@ -1,0 +1,26 @@
+<div class="container">
+	<div class="row">
+		<div masonry load-images="true" column-width="460" reload-on-resize reload-on-show masonry-options="{ transitionDuration: '0.4s' }" class="col-md-12 waterfall">
+			<div class="masonry-brick waterfall-item" ng-repeat="post in postsList track by $index">
+				<div class="info p" style="margin-bottom: 0px;">
+					<img class="avatar" ng-src="{{post.poster.useravatar}}">
+					<div class="nickname">{{post.poster.usernickname}}</div>
+				</div>
+				<div class="title p">{{ post.posttitle }}</div>
+				<div ng-repeat="postimage in post.postimages">
+					<img ng-src="{{postimage}}">
+				</div>
+				<div class="content p" ng-bind-html="$parent.trans(post.postcontent)"></div>
+				<div class="mkcomment p">
+					<input name="commentcontent" class="form-control" ng-model="commentWords"><br>
+					<input type="submit" value="评论" class="btn-xs btn-success" ng-click="$parent.mkComment(post.poststamp, commentWords)">
+				</div>
+				<div ng-repeat="comment in post.comments" class="comment">
+					<img class="avatar" ng-src="{{comment._commenter.useravatar}}" alt="">
+					<div class="nickname">{{comment._commenter.usernickname}} 的回复：</div>
+					<div class="commentcontent">{{comment.commentcontent}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

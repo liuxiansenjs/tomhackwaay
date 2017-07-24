@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>avatar</title>
+	<style>
+		*, *::before, *::after {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.picbox {
+			position: relative;
+			width: 1000px;
+			height: 400px;
+			overflow: hidden;
+		}
+		
+		.picbox .left > img {
+			position: absolute;
+			z-index: 1;
+			height: 100%;
+		}
+
+		.picbox .left .cutbox {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100px;
+			height: 100px;
+			z-index: 3;
+			overflow: hidden;
+		}
+
+		.picbox .left .cover {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,0.8);
+			z-index: 2;
+		}
+
+		.picbox .left {
+			position: relative;
+			width: 400px;
+			height: 400px;
+			float: left;
+			overflow: hidden;
+		}
+
+		.picbox .right {
+			position: relative;
+			float: left;
+			width: 200px;
+			height: 400px;
+			background: rgba(0,0,0,0.8);
+			overflow: hidden;
+		}
+
+		.picbox .right .showpic {
+			position: relative;
+			margin: 40px auto 0 auto;
+			overflow: hidden;
+
+		}
+
+		.picbox .right .large {
+			width : 100px;
+			height: 100px;
+			background: #ccc;
+		}
+		.picbox .right .medium {
+			width : 80px;
+			height: 80px;
+			background: #ccc;
+		}
+		.picbox .right .small {
+			width : 50px;
+			height: 50px;
+			background: #ccc;
+		}
+
+		.picbox .submit {
+			position: absolute;
+			width: 40px;
+			height: 40px;
+			background: orange;
+			box-shadow: 2px 2px 2px 2px #666;
+			right: 10px;
+			top: 350px;
+			border-radius: 50%;
+			color: #eeff00;
+			z-index: 5;
+			line-height: 40px;
+			text-align: center;
+			font-size: 20px;
+		}
+
+
+
+
+	</style>
+	<link rel="stylesheet" href="/libs/css/jquery-ui.min.css">
+	<link rel="stylesheet" href="/libs/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/libs/css/modal.css">
+	<script src="/libs/js/jquery.js"></script>
+	<script src="/libs/js/jquery-ui.min.js"></script>
+</head>
+<body>
+		<div class="custom-modal hide">
+			<div class="content">
+				
+			</div>
+		</div>
+
+
+	<div class="picbox" id="picbox">
+		<div class="left">
+			<img src="<%= url %>" alt="">
+			<div class="cutbox"></div>
+			<div class="cover"></div>
+			<span class="glyphicon glyphicon-ok submit"></span>
+		</div>
+		<div class="right">
+			<div class="showpic large"></div>
+			<div class="showpic medium"></div>
+			<div class="showpic small"></div>
+		</div>
+	</div>
+	<script>
+		function PicBox (picbox) {
+			this.picbox = $(picbox);
+			this.cutbox = this.picbox.find('.cutbox');
+			this.picture = this.picbox.find('img');
+			this.showPicList = this.picbox.find('.showpic');
+			this._offsetX = 0;
+			this._offsetY = 0;
+			this._picture_w = this.picture.width();
+			this._picture_h = this.picture.height();
+
+			this.init();
+		}
+
+		PicBox.prototype.init = function() {
+			var self = this;
+			this.cutbox.append(this.picture.clone().css({
+				position: 'absolute',
+				width: this._picture_w,
+				height: this._picture_h
+			}));
+			this.showPicList.each(function() {
+				var showpic = $(this);
+				showpic.css({ position: 'relative' });
+				var picture = self.picture.clone().css({position: 'absolute'});
+				showpic.append(picture);
+				self.translate(showpic);
+			});
+			this.cutbox.draggable({
+				containment: '.picbox .left',
+				scroll: false,
+				drag: function() {
+					self._offsetX = self.cutbox.offset().left;
+					self._offsetY = self.cutbox.offset().top;
+					self.cutbox.find('img').css({
+						'left': -self._offsetX,
+						'top': -self._offsetY
+					});
+					self.showPicList.each(function() {
+						var showpic = $(this);
+						self.translate(showpic);
+					});
+				}
+			});
+
+			this.cutbox.resizable({
+				aspectRatio: true,
+				containment: '.picbox .left',
+				resize: function(e, ui) {
+					self.showPicList.each(function() {
+						var showpic = $(this);
+						self.translate(showpic);
+					});
+				}
+			});
+			
+		}
+
+		PicBox.prototype.translate = function(showpic) {
+			var showpic = $(showpic);
+			var showpic_w = showpic.width();
+			var showpic_h = showpic.height();
+			var cutbox_w = this.cutbox.width();
+			var cutbox_h = this.cutbox.height();
+			var ratio = showpic_w / cutbox_w;
+			var _show_pic_w = this._picture_w * ratio;
+			var _show_pic_h = this._picture_h * ratio;
+			var _show_pic_left = this._offsetX * ratio;
+			var _show_pic_top = this._offsetY * ratio;
+			showpic.find('img').css({
+				width: _show_pic_w,
+				height: _show_pic_h,
+				left: - _show_pic_left,
+				top: - _show_pic_top,
+			});
+		}
+
+		PicBox.prototype.submit = function(url, callback) {
+			var self = this;
+			this.picbox.find('.submit').on('click', function() {
+				$.post(url, {
+					left: self._offsetX,
+					top: self._offsetY,
+					width: self.cutbox.width(),
+					height: self.cutbox.height(),
+					_width: self._picture_w,
+					_height: self._picture_h,
+				}, function(data) {
+					callback && callback(data);
+				});
+			});
+		}
+
+
+
+		var picbox = new PicBox($('#picbox'));
+		picbox.submit('/gmprocess', function(data) {
+			if (data.results === 'success') {
+				$('.custom-modal').removeClass('hide').find('.content').html('上传成功');
+				setTimeout(function() {
+					window.location = '/pages/avatar.html';
+				}, 1000);
+			} else {
+				$('.custom-modal').removeClass('hide').find('.content').html('上传失败');
+			}
+		})
+	</script>
+</body>
+</html>

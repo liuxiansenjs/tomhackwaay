@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="cn" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title ng-bind="root.worldmap"></title>
+    <link rel="stylesheet" href="/libs/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/components/header/header.css">
+    <link rel="stylesheet" href="/components/main/main.css">
+    <link rel="stylesheet" href="/components/tweet/tweet.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <link rel="stylesheet" href="/libs/css/modal.css">
+    <style>
+        *, *;;before, *::after {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+    </style>
+    <script src="/libs/js/Queue.js"></script>
+    <script src="/libs/js/jquery.js"></script>
+    <script src="/libs/js/bootstrap.min.js"></script>
+    <script src="/libs/js/angular.min.js"></script>
+    <script src="/libs/js/angular-sanitize.min.js"></script>
+    <script src="/libs/js/angular-route.min.js"></script>
+    <script src="/libs/js/ev-emitter.js"></script>
+    <script src="/libs/js/matches-selector.js"></script>
+    <script src="/libs/js/utils.js"></script>
+    <script src="/libs/js/get-size.js"></script>
+    <script src="/libs/js/item.js"></script>
+    <script src="/libs/js/outlayer.js"></script>
+    <script src="/libs/js/imagesLoaded.js"></script>
+    <script src="/libs/js/masonry.min.js"></script>
+    <script src="/libs/js/angular-masonry.min.js"></script>
+    <script src="/ng.js"></script>
+
+</head>
+<body ng-cloak">
+    <div ng-view></div>
+</body>
+</html>
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>avatar</title>
+	<link rel="stylesheet" href="/libs/css/bootstrap.min.css">
+	<style>
+		*, *::before, *::after {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<form method="POST" action="/changeUserAvatar" enctype="multipart/form-data">
+		<div class="form-group">
+		<label style="display: block;">上传新头像
+			<input type="file" name="useravatar">
+		</label>
+		<input type="submit" class="btn btn-default" value="上传">
+	</form>
+</div>
+</body>
+</html>

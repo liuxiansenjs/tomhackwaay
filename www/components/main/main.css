@@ -1,0 +1,83 @@
+.waterfall {
+	margin: 0 auto;
+}
+
+.waterfall .waterfall-item {
+	position: relative;
+	width: 94%;
+	border-radius: 0px 0px 5px 5px;
+	box-shadow: 2px 2px 2px 2px #ccc;
+	margin-bottom: 20px;
+	border-bottom: 5px #ff0 solid;
+	padding-bottom: 20px;
+}
+
+.waterfall .waterfall-item .info {
+	position: relative;
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 40px;
+	height: 40px;
+}
+
+.waterfall .waterfall-item .info .nickname {
+
+}
+
+.waterfall .waterfall-item .p {
+	padding: 0px 50px 0px 50px;
+	margin-bottom: 20px;
+}
+
+.waterfall .waterfall-item .info .avatar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 40px;
+}
+
+
+
+.waterfall .waterfall-item .title {
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 36px;
+}
+
+.waterfall .waterfall-item .content {
+	font-size: 14px;
+	line-height: 28px;
+	background: #eee;
+}
+
+.waterfall .waterfall-item .mkcomment {
+
+}
+
+.waterfall .waterfall-item .comment {
+	position: relative;
+	line-height: 40px;
+	height: 40px;
+	font-size: 14px;
+	overflow: hidden;
+	margin: 0px 50px 5px 50px;
+	border-bottom: 1px #aaa solid;
+}
+
+.waterfall .waterfall-item .comment .avatar {
+	display: inline-block;
+	float: left;
+	height: 40px;
+	margin-right: 10px;
+}
+.waterfall .waterfall-item .comment .nickname, .waterfall .waterfall-item .comment .commentcontent {
+	float: left;
+}
+
+
+@media all and (min-width: 992px) {
+	.waterfall .waterfall-item {
+		width: 420px;
+		transform: translateX(40px);
+	}
+}

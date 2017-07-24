@@ -1,0 +1,18 @@
+<div class="container-fluid tweet-com" style="background: linear-gradient(#000, #333); margin-top: -20px; padding: 20px 0px 0px 0px;">
+	<form class="form-horizontal">
+		<div class="form-group">
+			<div class="col-md-9 col-xs-9 col-md-offset-1 col-xs-offset-1">
+				<input type="text" class="form-control" id="posttitle" placeholder="在这里输入标题，但不要输入任何script或者style标签" ng-model="posttitle">
+			</div>
+			<div class="col-md-2 col-xs-2">
+				<input type="submit" class="btn btn-success" value="发送" ng-click="postTweet($event)">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-md-9 col-xs-9 col-md-offset-1 col-xs-offset-1">
+				<textarea class="form-control" rows="4" id="postcontent" ng-model="postcontent" placeholder="在这里输入内容，但不要输入任何script或者style标签"></textarea>
+			</div>
+		</div>
+		
+	</form>
+</div>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="cn">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>:: 登录 ::</title>
+		<link rel="stylesheet" href="/libs/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/libs/css/modal.css">
+		<script src="/libs/js/jquery.js"></script>
+	</head>
+	<body>
+		<div class="custom-modal hide">
+			<div class="content">
+				
+			</div>
+		</div>
+		<div class="container">
+			<div class="jumbotron">
+				<div class="row">
+					<h1>欢迎</h1>
+				</div>
+				<div class="row">
+					<form class="col-md-8" id="register" style="margin: 40px 0;">
+						<div class="form-group">
+							<label for="userphone" style="margin-bottom: 20px;">手机号</label>
+								<input type="string" class="form-control" placeholder="请输入手机号(必须为11位纯数字)" name="userphone" id="userphone">
+							
+							<div class="alert alert-danger hide" style="height: 34px; margin-top: 10px; line-height: 34px; font-size: 14px; padding: 0 20px;" role="alert" id="alertPhone"></div>
+						</div>
+						<div class="form-group">
+							<label for="userpassword" style="margin-bottom: 20px;">密码</label>
+							<input type="password" class="form-control" id="userpassword" name="userpassword" placeholder="请输入密码, 密码不允许有<>符号">
+							<div class="hide" id="alertPassword" style="margin: 10px;">
+								密码强度
+								<span style="font-size: 20px;">强</span>
+							</div>
+						</div>
+						<input type="submit" class="btn-lg btn-primary disabled" id="submit" disabled="true" value="注册">
+						<a href="javascript:;" id="toggle" style="margin-left: 10px;">已有账号？点击切换到登录</a>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>
+
+<script>
+(function() {
+	var showRegisterPage = true;
+	var $registerForm = $('#register');
+	var $userphone = $registerForm.find('input[name=userphone]');
+	var $userpassword = $registerForm.find('input[name=userpassword]');
+	var $alertPhone = $registerForm.find('#alertPhone');
+	var $submit = $registerForm.find('#submit');
+	var $toggle = $registerForm.find('#toggle');
+	var $alertPassword = $registerForm.find('#alertPassword');
+	var passwordStrengthComponent = new PasswordStrength($alertPassword);
+	var passPhone = false;
+
+	$userphone.on('input', function() {
+		var userphone = /\d/.test($userphone.val()) ? $userphone.val().match(/\d/g).join("") : '';
+		$userphone.val(userphone);
+		if (showRegisterPage) {
+			$.post('/register/check', {
+				userphone: $userphone.val()
+			}, function(data) {
+				if (data.results === 'success') {
+					$alertPhone.html('该手机号可以使用').removeClass('alert-danger 	hide').addClass('alert-success');
+					if (/\d{11}/.test($userphone.val())) {
+						passPhone = true;
+					}
+				} else {
+					$alertPhone.html('手机号已被注册').removeClass('alert-success  	hide').addClass('alert-danger');
+					passPhone = false;
+				}
+				$submit.attr('disabled', true);
+				if (passPhone && passwordStrengthComponent.score > 1) {
+				$submit.attr('disabled', false);
+				}
+			});
+		} else {
+			passPhone = true;
+		}
+	})
+
+	$userphone.on('blur', function() {
+		$alertPhone.addClass('hide');
+	})
+
+	$userpassword.on('input', function() {
+		var userpassword = /[^<>]/.test($userpassword.val()) ? $userpassword.val().match(/[^<>]/g).join("") : '';
+		$userpassword.val(userpassword);
+		passwordStrengthComponent.test(userpassword);
+		$submit.attr('disabled', true);
+		if (passPhone && passwordStrengthComponent.score > 1) {
+			$submit.attr('disabled', false);
+		}
+	});
+
+	$userpassword.on('blur', function() {
+		$alertPassword.addClass('hide');
+	});
+
+	$submit.on('click', function(e) {
+		e.preventDefault();
+		if (showRegisterPage) {
+			$.post('/register', {
+				userphone: $userphone.val(),
+				userpassword: $userpassword.val()
+			}, function(data) {
+				console.log(data);
+				if (data.results === 'success') {
+					$('.custom-modal').removeClass('hide').find('.content').html('注册成功');
+					setTimeout(function() {
+						$('.custom-modal').addClass('hide');
+						window.location = '/';
+					}, 1000);
+				}
+			});
+		} else {
+			$.post('/authentication', {
+				userphone: $userphone.val(),
+				userpassword: $userpassword.val()
+			}, function(data) {
+				if (data.results === 'success') {
+					window.location = '/';
+				}
+			});
+		}
+	});
+
+	$toggle.on('click', function(e) {
+		showRegisterPage = !showRegisterPage;
+		if (showRegisterPage) {
+			passPhone = false;
+			$userphone.val('');
+			$userpassword.val('');
+			$submit.val('注册').attr('disabled', true);
+			$toggle.html('已有账号？点击切换到登录');
+		} else {
+			passPhone = true;
+			$userphone.val('');
+			$userpassword.val('');
+			$submit.val('登录').attr('disabled', false);
+			$toggle.html('没有账号？点击切换到注册');
+		}
+	});
+
+
+
+	function PasswordStrength (dom) {
+		this.$dom = $(dom);
+		this.score = 0;
+	}
+
+	PasswordStrength.prototype.test = function(password) {
+		this.score = 0;
+		if (/[a-z]/.test(password)) {
+			this.score++;
+		}
+		if (/[A-Z]/.test(password)) {
+			this.score++;
+		}
+		if (/\d/.test(password)) {
+			this.score++;
+		}
+		if (/[\W]/.test(password)) {
+			this.score++;
+		}
+		this.render();
+	}
+
+	PasswordStrength.prototype.render = function() {
+		if (this.score === 0) {
+			this.$dom.removeClass('hide').find('span').html('弱').css({color: '#f00'});
+		}
+		if (this.score === 1) {
+			this.$dom.removeClass('hide').find('span').html('较弱').css({color: '#0f0'});
+
+		}
+		if (this.score === 2) {
+			this.$dom.removeClass('hide').find('span').html('一般').css({color: '#0f0'});
+
+		}
+		if (this.score === 3) {
+			this.$dom.removeClass('hide').find('span').html('较强').css({color: '#0f0'});
+		}
+		if (this.score === 4) {
+			this.$dom.removeClass('hide').find('span').html('强').css({color: '#0f0'});
+		}
+	}
+}());
+</script>
